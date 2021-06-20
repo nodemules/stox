@@ -19,18 +19,15 @@ class SecurityFilter(
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         Try.of {
-            request.cookies
-                ?.first { "session" == it.name }
-                ?.let { FirebaseAuth.getInstance().verifySessionCookie(it.value, true) }
-                ?.let { token ->
-                    securityService.getAuthorization()
-                        ?.let { FirebaseAuth.getInstance().verifyIdToken(securityService.getAuthorization()) }
-                        ?.let { idToken -> Credentials(token, idToken) }
-                        ?.takeIf { it.isValid() }
+            securityService.getAuthorization()
+                ?.let {
+                    FirebaseAuth.getInstance().verifyIdToken(it)
+                        ?.let { idToken -> Credentials(idToken) }
                         ?.let { credentials ->
                             UsernamePasswordAuthenticationToken(
-                                FirebaseAuth.getInstance().getUser(token.uid),
-                                credentials
+                                FirebaseAuth.getInstance().getUser(credentials.token.uid),
+                                credentials,
+                                listOf()
                             )
                         }
                 }
@@ -40,9 +37,10 @@ class SecurityFilter(
                 ?.let { authentication ->
                     SecurityContextHolder.getContext().authentication = authentication
                 }
-        }.runCatching {
-            logger.error("An error occurred authenticating with Firebase", this.cause)
+        }.onFailure {
+            logger.error("An error occurred authenticating with Firebase", it.cause)
         }
+        filterChain.doFilter(request, response)
     }
 
     companion object : KLogging()
