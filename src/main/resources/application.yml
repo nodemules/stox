@@ -1,0 +1,9 @@
+server:
+  port: 8201
+feign:
+  hystrix:
+    enabled: true
+integrations:
+  alpha-vantage:
+    host: https://www.alphavantage.co
+    api-key: ${ALPHA_VANTAGE_API_KEY}

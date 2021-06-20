@@ -1,0 +1,6 @@
+logging:
+  level:
+    com.nodemules.stock: DEBUG
+feign:
+  hystrix:
+    enabled: true
