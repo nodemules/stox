@@ -7,11 +7,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.get
 import java.nio.charset.Charset
 
+@WithMockUser
 @SpringBootTest(
     properties = [
         "integrations.alpha-vantage.host=http://localhost:8999/alpha-vantage",

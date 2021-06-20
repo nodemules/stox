@@ -5,6 +5,7 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.nodemules.stox.security.SecurityFilter
+import io.vavr.control.Try
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -41,14 +42,18 @@ class SecurityConfig(
     }
 
     override fun afterPropertiesSet() {
-        val serviceAccount = FileInputStream("firebase.json");
+        Try.of {
+            FirebaseApp.getInstance(FIREBASE_APP_NAME)
+        }.onFailure {
+            val serviceAccount = FileInputStream("firebase.json")
 
-        val options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-            .setDatabaseUrl("https://stox-54139-default-rtdb.firebaseio.com")
-            .build();
+            val options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setDatabaseUrl("https://stox-54139-default-rtdb.firebaseio.com")
+                .build()
 
-        FirebaseApp.initializeApp(options)
+            FirebaseApp.initializeApp(options, FIREBASE_APP_NAME)
+        }
     }
 
     private fun restAuthenticationEntryPoint(): AuthenticationEntryPoint =
@@ -64,4 +69,8 @@ class SecurityConfig(
             httpServletResponse.status = errorCode
             httpServletResponse.writer.write(objectMapper.writeValueAsString(errorObject))
         }
+
+    companion object {
+        const val FIREBASE_APP_NAME = "stox-api"
+    }
 }
