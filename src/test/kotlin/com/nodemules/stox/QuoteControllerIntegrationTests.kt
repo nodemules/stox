@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.get
@@ -16,11 +17,10 @@ import java.nio.charset.Charset
 @WithMockUser
 @SpringBootTest(
     properties = [
-        "integrations.alpha-vantage.host=http://localhost:8999/alpha-vantage",
-        "integrations.alpha-vantage.api-key=TEST",
-        "feign.hystrix.enabled=true"
+        "integrations.alpha-vantage.host=http://localhost:8999/alpha-vantage"
     ]
 )
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @AutoConfigureWireMock(port = 8999)
 class QuoteControllerIntegrationTests(

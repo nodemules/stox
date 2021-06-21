@@ -4,3 +4,7 @@ logging:
 feign:
   hystrix:
     enabled: true
+integrations:
+  alpha-vantage:
+    host: http://localhost
+    api-key: TEST

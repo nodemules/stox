@@ -57,7 +57,7 @@ class SecurityConfig(
     }
 
     private fun restAuthenticationEntryPoint(): AuthenticationEntryPoint =
-        AuthenticationEntryPoint { _: HttpServletRequest?, httpServletResponse: HttpServletResponse, e: AuthenticationException? ->
+        AuthenticationEntryPoint { _: HttpServletRequest?, httpServletResponse: HttpServletResponse, _: AuthenticationException? ->
             val errorCode = 401
             val errorObject: MutableMap<String, Any> = hashMapOf(
                 "message" to "Unauthorized access of protected resource, invalid credentials",
