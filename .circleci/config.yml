@@ -38,5 +38,11 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle.kts" }}
 
+      # dummy firebase.json
+      - run: echo "$FIREBASE_JSON" | base64 --decode > firebase.json
+
       # run tests!
       - run: gradle test
+
+      - store_test_results
+        path: test_results
