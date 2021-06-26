@@ -7,3 +7,6 @@ integrations:
   alpha-vantage:
     host: https://www.alphavantage.co
     api-key: ${ALPHA_VANTAGE_API_KEY}
+firebase:
+  config-uri: firebase.json
+  database-url: https://stox-54139-default-rtdb.firebaseio.com
