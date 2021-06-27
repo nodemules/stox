@@ -1,12 +1,7 @@
 package com.nodemules.stox.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.auth.oauth2.GoogleCredentials
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
 import com.nodemules.stox.security.SecurityFilter
-import io.vavr.control.Try
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -18,11 +13,9 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
-import java.io.FileInputStream
 import java.time.ZonedDateTime
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +23,7 @@ import javax.servlet.http.HttpServletResponse
 class SecurityConfig(
     val objectMapper: ObjectMapper,
     val securityFilter: SecurityFilter
-) : WebSecurityConfigurerAdapter(), InitializingBean {
+) : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http
@@ -39,21 +32,6 @@ class SecurityConfig(
             .and().authorizeRequests().anyRequest().authenticated()
             .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter::class.java)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    }
-
-    override fun afterPropertiesSet() {
-        Try.of {
-            FirebaseApp.getInstance(FIREBASE_APP_NAME)
-        }.onFailure {
-            val serviceAccount = FileInputStream("firebase.json")
-
-            val options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .setDatabaseUrl("https://stox-54139-default-rtdb.firebaseio.com")
-                .build()
-
-            FirebaseApp.initializeApp(options, FIREBASE_APP_NAME)
-        }
     }
 
     private fun restAuthenticationEntryPoint(): AuthenticationEntryPoint =

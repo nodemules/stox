@@ -14,18 +14,19 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class SecurityFilter(
-    val securityService: SecurityService
+    val securityService: SecurityService,
+    val firebaseAuth: FirebaseAuth
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         Try.of {
             securityService.getAuthorization()
                 ?.let {
-                    FirebaseAuth.getInstance().verifyIdToken(it)
+                    firebaseAuth.verifyIdToken(it)
                         ?.let { idToken -> Credentials(idToken) }
                         ?.let { credentials ->
                             UsernamePasswordAuthenticationToken(
-                                FirebaseAuth.getInstance().getUser(credentials.token.uid),
+                                firebaseAuth.getUser(credentials.token.uid),
                                 credentials,
                                 listOf()
                             )
@@ -38,7 +39,7 @@ class SecurityFilter(
                     SecurityContextHolder.getContext().authentication = authentication
                 }
         }.onFailure {
-            logger.error("An error occurred authenticating with Firebase", it.cause)
+            logger.error("An error occurred authenticating with Firebase", it)
         }
         filterChain.doFilter(request, response)
     }
