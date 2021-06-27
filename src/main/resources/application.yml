@@ -9,4 +9,4 @@ integrations:
     api-key: ${ALPHA_VANTAGE_API_KEY}
 firebase:
   config-uri: firebase.json
-  database-url: https://stox-54139-default-rtdb.firebaseio.com
+  database-url: ${FIREBASE_DATABASE_URL}
