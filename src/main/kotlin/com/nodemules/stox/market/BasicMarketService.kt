@@ -8,6 +8,7 @@ import com.nodemules.stox.integrations.yahoo.YahooQuote
 import com.nodemules.stox.quote.GlobalQuote
 import io.vavr.control.Either
 import mu.KLogging
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.math.RoundingMode
 import java.util.stream.Collectors
@@ -17,6 +18,7 @@ class BasicMarketService(
     val yahooFinanceMarketClient: YahooFinanceMarketClient
 ) : MarketService {
 
+    @Cacheable("trendingCache")
     override fun getTrending(quoteType: YahooQuote.QuoteType?): Either<Failure, List<GlobalQuote>> =
         yahooFinanceMarketClient.getTrendingTickers()
             .map { it.finance.result.firstOrNull() }
@@ -26,6 +28,7 @@ class BasicMarketService(
                 result.quotes.filter { quoteType == null || it.quoteType == quoteType.name }.map { quote -> quote.toGlobalQuote() }
             }
 
+    @Cacheable("sparkCache")
     override fun getSparks(symbols: List<String>): Either<Failure, List<Spark>> =
         yahooFinanceMarketClient.getSparks(symbols.toTypedArray())
             .map { it.values.stream().collect(Collectors.toList()) }

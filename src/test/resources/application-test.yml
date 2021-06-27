@@ -4,6 +4,9 @@ logging:
 feign:
   hystrix:
     enabled: true
+cache:
+  enabled: false
+  ttl: 0
 integrations:
   alpha-vantage:
     host: http://localhost:8999/alpha-vantage
