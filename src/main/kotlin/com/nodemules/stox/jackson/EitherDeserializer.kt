@@ -9,13 +9,15 @@ import com.fasterxml.jackson.databind.type.TypeFactory
 import com.nodemules.stox.failure.Failure
 import com.nodemules.stox.failure.GenericFailure
 import io.vavr.control.Either
+import io.vavr.control.Try
+import mu.KLogging
 import org.springframework.boot.jackson.JsonComponent
 import org.springframework.boot.jackson.JsonObjectDeserializer
 
 @JsonComponent
-class EitherDeserializer : JsonObjectDeserializer<Either<Failure, *>>(), ContextualDeserializer {
-
-    private var type: JavaType? = null
+class EitherDeserializer(
+    private val type: JavaType? = null
+) : JsonObjectDeserializer<Either<Failure, *>>(), ContextualDeserializer {
 
     @Throws(JsonProcessingException::class)
     override fun deserializeObject(
@@ -25,13 +27,21 @@ class EitherDeserializer : JsonObjectDeserializer<Either<Failure, *>>(), Context
         tree: JsonNode?
     ): Either<Failure, *> {
         return type
-            ?.let { codec?.readValue<Any>(codec.treeAsTokens(tree), it).run { Either.right(this) } }
+            ?.let {
+                Try.of {
+                    codec?.readValue<Any>(codec.treeAsTokens(tree), it).run { Either.right<Failure, Any>(this) }
+                }.onFailure { ex ->
+                    logger.error(ex) { "Unable to deserialize response for $type" }
+                    Either.left<Failure, Any>(GenericFailure(ex.message))
+                }.orNull
+            }
             ?: Either.left<Failure, Any>(GenericFailure("Unable to deserialize response for $type"))
     }
 
     override fun createContextual(ctxt: DeserializationContext?, property: BeanProperty?): JsonDeserializer<Either<Failure, *>> {
-        type = ctxt?.contextualType?.containedTypeOrUnknown(1)
-            .takeUnless { it == TypeFactory.unknownType() }
-        return this
+        return EitherDeserializer(ctxt?.contextualType?.containedTypeOrUnknown(1)
+            .takeUnless { it == TypeFactory.unknownType() })
     }
+
+    companion object : KLogging()
 }

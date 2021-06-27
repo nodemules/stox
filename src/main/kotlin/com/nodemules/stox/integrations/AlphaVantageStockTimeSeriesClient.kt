@@ -9,6 +9,7 @@ import feign.Logger
 import feign.RequestInterceptor
 import feign.hystrix.FallbackFactory
 import io.vavr.control.Either
+import mu.KLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.context.annotation.Bean
@@ -46,13 +47,17 @@ interface AlphaVantageStockTimeSeriesClient {
         override fun create(cause: Throwable?): AlphaVantageStockTimeSeriesClient = object : AlphaVantageStockTimeSeriesClient {
             override fun getGlobalQuote(symbol: String): Either<Failure, AlphaVantageGlobalQuoteResponse> {
                 val errorMessage = "An error occurred getting GLOBAL_QUOTE for $symbol"
+                logger.error(cause) { errorMessage }
                 return when (cause) {
                     is FeignException -> Either.left(HttpFailure(HttpStatus.valueOf(cause.status()), errorMessage))
                     else -> Either.left(HttpFailure(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage))
                 }
             }
 
+
         }
+
+        companion object : KLogging()
     }
 
 }
