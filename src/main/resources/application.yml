@@ -3,10 +3,24 @@ server:
 feign:
   hystrix:
     enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 60000
 integrations:
   alpha-vantage:
     host: https://www.alphavantage.co
     api-key: ${ALPHA_VANTAGE_API_KEY}
+  yahoo:
+    host: https://apidojo-yahoo-finance-v1.p.rapidapi.com
+    api-key: ${YAHOO_FINANCE_API_KEY}
 firebase:
   config-uri: firebase.json
   database-url: ${FIREBASE_DATABASE_URL}
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false

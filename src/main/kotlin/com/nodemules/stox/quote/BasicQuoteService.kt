@@ -14,7 +14,7 @@ class BasicQuoteService(
 
     override fun getQuote(symbol: String): Either<Failure, GlobalQuote> = alphaVantageStockTimeSeriesClient.getGlobalQuote(symbol)
         .peek { logger.info { "Found quote for $symbol" } }
-        .peekLeft { logger.error { "Failed to find quote for $symbol because ${it.getReason()}" } }
+        .peekLeft { logger.error { "Failed to find quote for $symbol because ${it.reason}" } }
         .map { it.globalQuote.toGlobalQuote() }
 
     companion object : KLogging() {

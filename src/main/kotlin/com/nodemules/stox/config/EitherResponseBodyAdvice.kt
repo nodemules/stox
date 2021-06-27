@@ -25,6 +25,9 @@ class EitherResponseBodyAdvice : ResponseBodyAdvice<Either<Failure, *>> {
         selectedConverterType: Class<out HttpMessageConverter<*>>,
         request: ServerHttpRequest,
         response: ServerHttpResponse
-    ): Either<Failure, *>? = body?.peekLeft { response.setStatusCode(HttpStatus.valueOf(it.getCode())) }
+    ): Either<Failure, *>? = when (body){
+        is Either -> body.peekLeft { response.setStatusCode(HttpStatus.valueOf(it.code)) }
+        else -> body
+    }
 
 }

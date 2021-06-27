@@ -6,5 +6,8 @@ feign:
     enabled: true
 integrations:
   alpha-vantage:
-    host: http://localhost
+    host: http://localhost:8999/alpha-vantage
+    api-key: TEST
+  yahoo:
+    host: http://localhost:8999/yahoo
     api-key: TEST
