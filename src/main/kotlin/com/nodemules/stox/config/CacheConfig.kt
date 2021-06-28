@@ -38,15 +38,15 @@ class CacheConfig(
 
     private fun cacheConfigurationFactory(): Map<String, EitherRedisSerializer<*>> = mapOf(
         "quoteCache" to object : EitherRedisSerializer<GlobalQuote>(objectMapper) {
-            override fun typeReference(): TypeReference<GlobalQuote> = object : TypeReference<GlobalQuote>() {
+            override val typeReference: TypeReference<GlobalQuote> = object : TypeReference<GlobalQuote>() {
             }
         },
         "trendingCache" to object : EitherRedisSerializer<List<GlobalQuote>>(objectMapper) {
-            override fun typeReference(): TypeReference<List<GlobalQuote>> = object : TypeReference<List<GlobalQuote>>() {
+            override val typeReference: TypeReference<List<GlobalQuote>> = object : TypeReference<List<GlobalQuote>>() {
             }
         },
         "sparkCache" to object : EitherRedisSerializer<Spark>(objectMapper) {
-            override fun typeReference(): TypeReference<Spark> = object : TypeReference<Spark>() {
+            override val typeReference: TypeReference<Spark> = object : TypeReference<Spark>() {
             }
         }
     )
@@ -55,13 +55,13 @@ class CacheConfig(
         private val objectMapper: ObjectMapper
     ) : RedisSerializer<Either<Failure, T>> {
 
-        abstract fun typeReference(): TypeReference<T>
+        abstract val typeReference: TypeReference<T>
 
         override fun serialize(value: Either<Failure, T>?): ByteArray? =
             value?.map { objectMapper.writeValueAsBytes(it) }?.getOrElse(EMPTY_ARRAY)
 
         override fun deserialize(bytes: ByteArray?): Either<Failure, T>? =
-            bytes?.takeIf { it.isNotEmpty() }?.let { objectMapper.readValue(bytes, typeReference()) }?.let { Either.right(it) }
+            bytes?.takeIf { it.isNotEmpty() }?.let { objectMapper.readValue(bytes, typeReference) }?.let { Either.right(it) }
 
         companion object {
             val EMPTY_ARRAY = byteArrayOf()
