@@ -45,8 +45,8 @@ class CacheConfig(
             override fun typeReference(): TypeReference<List<GlobalQuote>> = object : TypeReference<List<GlobalQuote>>() {
             }
         },
-        "sparkCache" to object : EitherRedisSerializer<List<Spark>>(objectMapper) {
-            override fun typeReference(): TypeReference<List<Spark>> = object : TypeReference<List<Spark>>() {
+        "sparkCache" to object : EitherRedisSerializer<Spark>(objectMapper) {
+            override fun typeReference(): TypeReference<Spark> = object : TypeReference<Spark>() {
             }
         }
     )
