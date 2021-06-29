@@ -15,3 +15,5 @@ This API will serve stock information
   the Project Root
 * requires an Environment Variable `ALPHA_VANTAGE_API_KEY`
   from [AlphaVantage.co](https://www.alphavantage.co/support/#api-key)
+* requires an Environment Variable `YAHOO_FINANCE_API_KEY` from [RapidAPI](https://rapidapi.com/apidojo/api/yahoo-finance1)
+* requires `redis` (`docker run -d -p6379:6379 redis`)
