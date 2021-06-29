@@ -9,7 +9,7 @@ data class YahooQuote(
     val quoteSourceName: String?,
 
     val symbol: String,
-    val shortName: String,
+    val shortName: String? = null,
     val longName: String? = null,
 
     val regularMarketPrice: BigDecimal,
