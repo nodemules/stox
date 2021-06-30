@@ -1,10 +1,13 @@
 package com.nodemules.stox.integrations.yahoo
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import java.math.BigDecimal
 
 data class Spark(
     val symbol: String,
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     val timestamp: Array<Long>,
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     val close: Array<BigDecimal>,
     val chartPreviousClose: Int,
     val end: Int,
@@ -12,6 +15,17 @@ data class Spark(
     val previousClose: Int,
     val dataGranularity: Int,
 ) {
+    @JsonProperty
+    val timeseries: Array<Array<BigDecimal>> = timestamp.zip(close)
+        .map { pair -> arrayOf((pair.first * 1000).toBigDecimal(), pair.second) }
+        .toTypedArray()
+
+    @JsonProperty
+    val low: BigDecimal? = close.minOrNull()
+
+    @JsonProperty
+    val high: BigDecimal? = close.maxOrNull()
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

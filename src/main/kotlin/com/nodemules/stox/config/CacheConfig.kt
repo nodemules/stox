@@ -1,7 +1,9 @@
 package com.nodemules.stox.config
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nodemules.stox.failure.Failure
 import com.nodemules.stox.integrations.yahoo.Spark
 import com.nodemules.stox.quote.GlobalQuote
@@ -45,7 +47,7 @@ class CacheConfig(
             override val typeReference: TypeReference<List<GlobalQuote>> = object : TypeReference<List<GlobalQuote>>() {
             }
         },
-        "sparkCache" to object : EitherRedisSerializer<Spark>(objectMapper) {
+        "sparkCache" to object : EitherRedisSerializer<Spark>(jacksonObjectMapper().configure(MapperFeature.USE_ANNOTATIONS, false)) {
             override val typeReference: TypeReference<Spark> = object : TypeReference<Spark>() {
             }
         }
