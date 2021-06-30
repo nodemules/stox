@@ -1,5 +1,9 @@
 server:
   port: 8201
+logging:
+  level:
+    com.nodemules.stock: TRACE
+    org.springframework.cache: TRACE
 feign:
   hystrix:
     enabled: true
@@ -8,6 +12,15 @@ feign:
       default:
         connectTimeout: 5000
         readTimeout: 60000
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
+cache:
+  enabled: true
+  ttl: 300
 integrations:
   alpha-vantage:
     host: https://www.alphavantage.co
@@ -18,9 +31,3 @@ integrations:
 firebase:
   config-uri: firebase.json
   database-url: ${FIREBASE_DATABASE_URL}
-hystrix:
-  command:
-    default:
-      execution:
-        timeout:
-          enabled: false

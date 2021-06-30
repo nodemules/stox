@@ -5,13 +5,17 @@ import com.nodemules.stox.integrations.AlphaVantageGlobalQuote
 import com.nodemules.stox.integrations.AlphaVantageStockTimeSeriesClient
 import io.vavr.control.Either
 import mu.KLogging
+import org.springframework.cache.annotation.CacheConfig
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
+@CacheConfig(cacheNames = ["quoteCache"])
 class BasicQuoteService(
     val alphaVantageStockTimeSeriesClient: AlphaVantageStockTimeSeriesClient
 ) : QuoteService {
 
+    @Cacheable
     override fun getQuote(symbol: String): Either<Failure, GlobalQuote> = alphaVantageStockTimeSeriesClient.getGlobalQuote(symbol)
         .peek { logger.info { "Found quote for $symbol" } }
         .peekLeft { logger.error { "Failed to find quote for $symbol because ${it.reason}" } }

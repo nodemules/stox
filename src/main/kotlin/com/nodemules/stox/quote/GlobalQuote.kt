@@ -4,6 +4,7 @@ import java.math.BigDecimal
 import java.time.LocalDate
 
 data class GlobalQuote(
+    val quoteType: String? = null,
     val symbol: String,
     val open: BigDecimal,
     val high: BigDecimal? = null,

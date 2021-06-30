@@ -9,7 +9,7 @@ data class YahooQuote(
     val quoteSourceName: String?,
 
     val symbol: String,
-    val shortName: String,
+    val shortName: String? = null,
     val longName: String? = null,
 
     val regularMarketPrice: BigDecimal,
@@ -38,6 +38,4 @@ data class YahooQuote(
     val region: String
 ) {
     val open = regularMarketPrice + regularMarketChange
-
-    enum class QuoteType{ CRYPTOCURRENCY, EQUITY, ETF }
 }

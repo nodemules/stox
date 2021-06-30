@@ -4,7 +4,6 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
-import com.nodemules.stox.config.SecurityConfig
 import io.vavr.control.Try
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.context.annotation.Bean
@@ -17,11 +16,11 @@ class FirebaseConfig(
 ): InitializingBean {
 
     @Bean
-    fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance(FirebaseApp.getInstance(SecurityConfig.FIREBASE_APP_NAME))
+    fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance(FirebaseApp.getInstance(FIREBASE_APP_NAME))
 
     override fun afterPropertiesSet() {
         Try.of {
-            FirebaseApp.getInstance(SecurityConfig.FIREBASE_APP_NAME)
+            FirebaseApp.getInstance(FIREBASE_APP_NAME)
         }.onFailure {
             val serviceAccount = FileInputStream(firebaseProperties.configUri)
 
@@ -30,7 +29,11 @@ class FirebaseConfig(
                 .setDatabaseUrl(firebaseProperties.databaseUrl)
                 .build()
 
-            FirebaseApp.initializeApp(options, SecurityConfig.FIREBASE_APP_NAME)
+            FirebaseApp.initializeApp(options, FIREBASE_APP_NAME)
         }
+    }
+
+    companion object {
+        const val FIREBASE_APP_NAME = "stox-api"
     }
 }

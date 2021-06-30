@@ -47,8 +47,4 @@ class SecurityConfig(
             httpServletResponse.status = errorCode
             httpServletResponse.writer.write(objectMapper.writeValueAsString(errorObject))
         }
-
-    companion object {
-        const val FIREBASE_APP_NAME = "stox-api"
-    }
 }
